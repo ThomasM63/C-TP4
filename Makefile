@@ -1,8 +1,8 @@
 CC = g++
 CFLAGS = -ansi -pedantic -Wall -std=c++11 -g #-DMAP
 
-MAIN = main
-SRCS = Requete.cpp LectureLog.cpp analog.cpp Page.cpp
+MAIN = analog
+SRCS = analog.cpp  GestionMenu.cpp Requete.cpp LectureLog.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 $(MAIN) : $(OBJS)
@@ -17,4 +17,4 @@ $(MAIN) : $(OBJS)
 .PHONY : launch
 
 launch :
-	./main
+	./analog

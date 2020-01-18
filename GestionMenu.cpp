@@ -1,21 +1,25 @@
-#include <iostream>
-#include <fstream>
-#include <cstring>
-#include <string>
+//---------- Réalisation de la classe <GestionMenu> (fichier GestionMenu.cpp) ------------
 
-//#include "unistd.h"
+//---------------------------------------------------------------- INCLUDE
 
-
-#include "LectureLog.h"
-#include "GestionMenu.h"
-
+//-------------------------------------------------------- Include système
 using namespace std;
+#include <iostream>
+#include <cstring>
+#include <fstream>
+#include <sstream>
+//------------------------------------------------------ Include personnel
+#include "GestionMenu.h"
+//#include "Page.h"
 
 
+//------------------------------------------------------------- Constantes
 
+//----------------------------------------------------------------- PUBLIC
 
+//----------------------------------------------------- Méthodes publiques
 
-/*void Permissions(char* nameFile,const string format)
+void GestionMenu:: Permissions(char* nameFile,const string format)
 {
 
 	bool ecriture;
@@ -51,7 +55,7 @@ using namespace std;
 
 
 
-void ErreurFichier(const string format,char* nameFile )
+void  GestionMenu ::ErreurFichier(const string format,char* nameFile )
 {
 
 	string argString(nameFile);
@@ -81,7 +85,7 @@ void ErreurFichier(const string format,char* nameFile )
 
 }
 
-bool Ouverture(fstream& fic,const string format,char* nameFile )
+bool GestionMenu::Ouverture(fstream& fic,const string format,char* nameFile )
 {
 	string argString(nameFile);
 	fic.open(nameFile,ios::in|ios::out);
@@ -98,15 +102,12 @@ bool Ouverture(fstream& fic,const string format,char* nameFile )
 	}
 
 }
-*/
 
 
-
-
-int main(int argc, char** argv)
+void GestionMenu::LectureCommande(int argc, char** argv )
 {
 
-	/*string arg;
+	string arg;
 	string nameDot;
 
 
@@ -293,9 +294,39 @@ if(!erreurMenu)
 }
 
 	delete fluxDot;
-	*/
-	GestionMenu app;
-	app.LectureCommande(argc,argv);
-
-	return 0;
 }
+
+
+
+
+
+
+//------------------------------------------------- Surcharge d'opérateurs
+
+
+//-------------------------------------------- Constructeurs - destructeur
+
+GestionMenu::GestionMenu()
+{
+  #ifdef MAP
+    cout << "Appel au constructeur de <GestionMenu>" << endl;
+  #endif
+
+
+
+
+} //----- Fin de GestionMenu
+
+
+GestionMenu::~GestionMenu ()
+{
+#ifdef MAP
+    cout << "Appel au destructeur de <GestionMenu>" << endl;
+#endif
+
+} //----- Fin de ~GestionMenu
+
+
+//------------------------------------------------------------------ PRIVE
+
+//----------------------------------------------------- Méthodes protégées

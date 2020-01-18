@@ -1,13 +1,13 @@
 /*************************************************************************
-                           LectureLog  -  description
+                           GestionMenu  -  description
                              -------------------
     début                : novembre 2019
     copyright            : (C) 2019 par Yann Dupont et Thomas MIGNOT
 *************************************************************************/
 
-//---------- Interface de la classe <LectureLog> (fichier LectureLog.h) ----------------
-#if ! defined ( LectureLog_H )
-#define LectureLog_H
+//---------- Interface de la classe <GestionMenu> (fichier GestionMenu.h) ----------------
+#if ! defined ( GestionMenu_H )
+#define GestionMenu_H
 
 //--------------------------------------------------- Interfaces utilisées
 #include <fstream>
@@ -15,61 +15,42 @@
 #include <unordered_map>
 
 //#include "Page.h"
+#include "unistd.h"
+#include "LectureLog.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Rôle de la classe <LectureLog>
+// Rôle de la classe <GestionMenu>
 //classe permettant de lire le fichier log passé en paramètre
 //------------------------------------------------------------------------
 using namespace std;
 
 
-typedef struct Page
-{
 
-
-
-  string url;
-  string nbClics;
-  unordered_map<int,int>dicoTransition;
-
-Page ( string adresse="",int nombreClics=0)
-{
-
-  url=adresse;
-  nbClics=nombreClics;
-}
-
-
-}
-Page;
-
-
-class LectureLog
+class GestionMenu
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 
 //----------------------------------------------------- Méthodes publiques
-  string getNextWord(const string& line, const int& curSpace, int& nextSpace);
-  void  Lecture(ifstream& fluxLog,bool activeGraphe, bool activeExtension,int horaire,fstream*  fluxDot);
-  void creationGraphe(fstream& fluxDot, string nameFile);
-
-
+  void Permissions(char* nameFile,const string format);
+  void ErreurFichier(const string format,char* nameFile );
+  bool Ouverture(fstream& fic,const string format,char* nameFile );
+  void LectureCommande(int argc, char** argv );
 
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    LectureLog ( );
+    GestionMenu ();
     // Mode d'emploi :
     //
 
-    virtual ~LectureLog ( );
+    virtual ~GestionMenu ( );
     // Mode d'emploi :
     //
 
@@ -79,15 +60,12 @@ protected:
 //----------------------------------------------------- Méthodes protégées
 
 //----------------------------------------------------- Attributs protégés
-  unordered_map <string,int> dicoURL;
-
-  unordered_map <int,Page> dicoPages;
 
 
 
 
 };
 
-//-------------------------------- Autres définitions dépendantes de <LectureLog>
+//-------------------------------- Autres définitions dépendantes de <GestionMenu>
 
-#endif // LectureLog_H
+#endif // GestionMenu_H
