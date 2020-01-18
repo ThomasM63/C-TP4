@@ -1,20 +1,23 @@
-CC = g++
-CFLAGS = -ansi -pedantic -Wall -std=c++11 -g #-DMAP
 
-MAIN = analog
-SRCS = analog.cpp  GestionMenu.cpp Requete.cpp LectureLog.cpp
-OBJS = $(SRCS:.cpp=.o)
+OBJ=main.o GestionMenu.o LectureLog.o
+EXEC=analog
+FLAGS=-g -o0 -ansi -pedantic -Wall -std=c++11
+DEFINES=
 
-$(MAIN) : $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+.PHONY : clear
+
+clear :
+	rm $(OBJ) $(EXEC)
+
+run : $(EXEC)
+	./analog
 
 %.o : %.cpp %.h
-	$(CC) $(CFLAGS) -c $^
+	g++ -c $(DEFINES) $<
 
-%.o : %.cpp
-	$(CC) $(CFLAGS) -c $^
+$(EXEC) : $(OBJ)
+	g++ $(FLAGS) $(DEFINES) -o $(EXEC) $(OBJ)
 
-.PHONY : launch
+build_MAP: DEFINES = -DMAP
 
-launch :
-	./analog
+build_MAP : $(EXEC)

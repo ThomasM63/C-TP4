@@ -39,7 +39,7 @@ public:
 //----------------------------------------------------- Méthodes publiques
   void Permissions(char* nameFile,const string format);
   void ErreurFichier(const string format,char* nameFile );
-  bool Ouverture(fstream& fic,const string format,char* nameFile );
+  bool Ouverture(fstream*& fic,const string format,char* nameFile );
   void LectureCommande(int argc, char** argv );
 
 //------------------------------------------------- Surcharge d'opérateurs

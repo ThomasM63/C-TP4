@@ -1,25 +1,21 @@
-//---------- Réalisation de la classe <GestionMenu> (fichier GestionMenu.cpp) ------------
-
-//---------------------------------------------------------------- INCLUDE
-
-//-------------------------------------------------------- Include système
-using namespace std;
 #include <iostream>
-#include <cstring>
 #include <fstream>
-#include <sstream>
-//------------------------------------------------------ Include personnel
+#include <cstring>
+#include <string>
+
+//#include "unistd.h"
+
+
+#include "LectureLog.h"
 #include "GestionMenu.h"
-//#include "Page.h"
+
+using namespace std;
 
 
-//------------------------------------------------------------- Constantes
 
-//----------------------------------------------------------------- PUBLIC
 
-//----------------------------------------------------- Méthodes publiques
 
-void GestionMenu:: Permissions(char* nameFile,const string format)
+/*void Permissions(char* nameFile,const string format)
 {
 
 	bool ecriture;
@@ -53,7 +49,9 @@ void GestionMenu:: Permissions(char* nameFile,const string format)
 
 }
 
-void  GestionMenu ::ErreurFichier(const string format,char* nameFile )
+
+
+void ErreurFichier(const string format,char* nameFile )
 {
 
 	string argString(nameFile);
@@ -83,68 +81,32 @@ void  GestionMenu ::ErreurFichier(const string format,char* nameFile )
 
 }
 
-
-bool GestionMenu::Ouverture(fstream*& fic,const string format,char* nameFile )
+bool Ouverture(fstream& fic,const string format,char* nameFile )
 {
 	string argString(nameFile);
-	(*fic).open(nameFile,ios::in|ios::out);
-	if(*fic)
+	fic.open(nameFile,ios::in|ios::out);
+	if(fic)
 	{
 		cout<<"Ouverture avec succès du fichier "<<argString<<endl;
 		return true;
 	}
 	else
 	{
-
-		if(format==".dot")
-		{
-
-			if(argString.find(format,0)==string::npos)
-			{
-				cerr<<"Vous n'avez pas spécifié un fichier au format "<<format<<endl;
-				return false;
-
-			}
-			else
-			{
-
-				if(access(nameFile,F_OK)==0)
-				{
-
-					Permissions(nameFile,format);
-					return false;
-
-				}
-
-				else
-				{
-					cout<<"Creation du nouveau fichier "<<argString<<endl;
-					ofstream f;
-					f.open(nameFile);
-					f.close();
-					(*fic).close();
-					(*fic).open(nameFile);
-
-					return true;
-				}
-			}
-		}
-
-		else
-		{
-			ErreurFichier(format,nameFile);
-			return false;
-		}
+		ErreurFichier(format,nameFile);
+		return false;
 
 	}
 
 }
+*/
 
 
-void GestionMenu::LectureCommande(int argc, char** argv )
+
+
+int main(int argc, char** argv)
 {
 
-	string arg;
+	/*string arg;
 	string nameDot;
 
 
@@ -159,10 +121,16 @@ void GestionMenu::LectureCommande(int argc, char** argv )
 	ifstream fluxLog;
 	//ofstream fluxDot;
 
+
 	fstream* fluxDot=new fstream;
 	//*fluxDot=fluxDotOut;
 
+
+
+
 	bool erreurMenu=false;
+
+
 
 	if(argc<=7)
 	{
@@ -191,7 +159,7 @@ void GestionMenu::LectureCommande(int argc, char** argv )
 			else
 			{
 				nameDot=argv[++i];
-				activeGraphe=Ouverture(fluxDot,formatDot,argv[i]);
+				activeGraphe=Ouverture(*fluxDot,formatDot,argv[i]);
 
 				erreurMenu= !activeGraphe;
 
@@ -325,39 +293,9 @@ if(!erreurMenu)
 }
 
 	delete fluxDot;
+	*/
+	GestionMenu app;
+	app.LectureCommande(argc,argv);
+
+	return 0;
 }
-
-
-
-
-
-
-//------------------------------------------------- Surcharge d'opérateurs
-
-
-//-------------------------------------------- Constructeurs - destructeur
-
-GestionMenu::GestionMenu()
-{
-  #ifdef MAP
-    cout << "Appel au constructeur de <GestionMenu>" << endl;
-  #endif
-
-
-
-
-} //----- Fin de GestionMenu
-
-
-GestionMenu::~GestionMenu ()
-{
-#ifdef MAP
-    cout << "Appel au destructeur de <GestionMenu>" << endl;
-#endif
-
-} //----- Fin de ~GestionMenu
-
-
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées

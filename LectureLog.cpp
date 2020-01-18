@@ -112,6 +112,7 @@ string LectureLog::getNextWord(const string& line, const int& curSpace, int& nex
       cerr << endl;
   }
 
+  fluxLog.close();
 
 }
 
@@ -181,6 +182,8 @@ void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
   cout.rdbuf(oldCoutBuffer);//redirection sur la sortie standard
 
   cout<<"Dot-file "<<nameFile<<" généré";
+
+  fluxDot.close();
 
 }
 
