@@ -101,16 +101,14 @@ int LectureLog::LectureFichier(ifstream& fluxLog, bool activeGraphe=false, bool 
             //cout << "insertion nouvelle page depart" << endl;
             unsigned int indice = dicoURL.size();
             dicoURL.insert({urlDepart, indice});
-            dicoIndices.insert({indice, urlDepart});
-            dicoPages.insert({indice, Page()});
+            dicoPages.insert({indice, Page(urlDepart)});
         }
         if(dicoURL.find(urlArrivee) == dicoURL.end())
         {
             //cout << "insertion nouvelle page arrivee" << endl;
             unsigned int indice = dicoURL.size();
             dicoURL.insert({urlArrivee, indice});
-            dicoIndices.insert({indice, urlArrivee});
-            dicoPages.insert({indice, Page()});
+            dicoPages.insert({indice, Page(urlArrivee)});
         }
 
         unsigned int indiceDepart = dicoURL[urlDepart];
@@ -131,7 +129,7 @@ int LectureLog::LectureFichier(ifstream& fluxLog, bool activeGraphe=false, bool 
     cerr << endl;
     for(auto it1 = dicoPages.begin(); it1 != dicoPages.end(); ++it1)
     {
-        cerr << "Page n." << (*it1).first << " : " << dicoIndices[(*it1).first] << endl;
+        cerr << "Page n." << (*it1).first << " : " << (*it1).second.url << endl;
         cerr << "   transitions :" << endl;
         for(auto it2 = (*it1).second.dicoTransitions.begin(); it2 != (*it1).second.dicoTransitions.end(); ++it2)
         {

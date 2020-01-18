@@ -61,7 +61,6 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
     unordered_map<string, unsigned int> dicoURL;
-    unordered_map<unsigned int, string> dicoIndices;
     unordered_map<unsigned int, Page> dicoPages;
 
 };

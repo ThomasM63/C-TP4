@@ -22,13 +22,12 @@ using namespace std;
 
 //-------------------------------------------- Constructeurs - destructeur
 
-Page::Page(unsigned int nombreClics)
+Page::Page(string url)
 {
-  #ifdef MAP
-      cout << "Appel au constructeur de <Page>" << endl;
-  #endif
-
-  nbClics=nombreClics;
+#ifdef MAP
+    cout << "Appel au constructeur de <Page>" << endl;
+#endif
+    this->url = url;
 
 } //----- Fin de Page
 

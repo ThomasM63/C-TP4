@@ -26,7 +26,7 @@ class Page
 //----------------------------------------------------------------- PUBLIC
 
 public:
-    unsigned int nbClics;
+    string url;
     // indice de la page de depart, nb de clics (page d'arrivee = this)
     unordered_map<unsigned int, unsigned int> dicoTransitions;
 //----------------------------------------------------- Méthodes publiques
@@ -36,7 +36,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    Page(unsigned int nbClics=0);
+    Page(string url="");
     // Mode d'emploi :
     //
 
