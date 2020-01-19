@@ -310,14 +310,17 @@ else
 }
 
 if(!erreurMenu)
+
 {
 	LectureLog lect;
 
-	lect.Lecture(fluxLog,activeGraphe,activeExtension,horaire,fluxDot);
+	//lect.Lecture(fluxLog,activeGraphe,activeExtension,horaire,fluxDot);
+	lect.Top10();
 
 	if(activeGraphe==true)
 	{
 		lect.creationGraphe(*fluxDot,nameDot);
+
 
 	}
 	//la commande est valide

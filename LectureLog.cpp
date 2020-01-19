@@ -8,6 +8,7 @@ using namespace std;
 #include <cstring>
 #include <fstream>
 #include <sstream>
+#include <map>
 //------------------------------------------------------ Include personnel
 #include "LectureLog.h"
 //#include "Page.h"
@@ -117,29 +118,95 @@ string LectureLog::getNextWord(const string& line, const int& curSpace, int& nex
 }
 
 
+void LectureLog:: Top10()
+{
+
+  unordered_map <int,int> mapTemp;
+  int indiceC;
+  int nbClics;
+
+  for(auto page : dicoPages)
+  {
+
+    indiceC=page.first;
+
+    int count = mapTemp.count(indiceC);
+    if(count == 0) // la transition n'existait pas encore
+    {
+      mapTemp.insert({indiceC, 0}); // transition effectuee 1 fois
+    }
+
+    for(auto trans: page.second.dicoTransition)
+    {
+
+      nbClics=trans.second;
+      mapTemp[indiceC]+=nbClics;
+
+
+    }
+
+  }
+
+  if(mapTemp.size()==0)
+  {
+
+    cout<<"Fichier .log vide"<<endl;
+  }
+
+  multimap<int,int> mapHits;
+
+  for(auto el : mapTemp)
+  {
+
+    mapHits.insert({el.second,el.first});
+
+  }
+
+
+  int nbIter=0;
+  multimap<int,int>::reverse_iterator rit;
+  int indicePage;
+  string urlPage;
+  for(rit=mapHits.rbegin();rit!=mapHits.rend() && nbIter<=9;rit++)
+  {
+    nbIter++;
+    //cout<<rit->first<<"|"<<rit->second<<endl;
+    indicePage=rit->second;
+    urlPage=(dicoPages[indicePage]).url;
+    cout<<urlPage<<" (nombre hits = "<<rit->first<<")"<<endl;
+
+
+
+  }
+
+
+}
+
+
 void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
 {
 
-  /*
-
-  TEST pour création de graphe avec valeurs arbitraires
-
-  Page p1("https:Google.fr",1);
-
-  Page p2("https:Youtube.fr",3);
-
-  Page p3("https:Yahoo.fr",5);
 
 
-  p1.dicoTransition[3]=6;
-  p2.dicoTransition[5]=2;
-  p3.dicoTransition[5]=0;
+  //TEST pour création de graphe avec valeurs arbitraires
+
+  /*Page p1("https:Google.fr");
+
+  Page p2("https:Youtube.fr");
+
+  Page p3("https:Yahoo.fr");
+
+
+  p1.dicoTransition[1]=6;
+  p2.dicoTransition[2]=8;
+  p3.dicoTransition[0]=8;
 
   dicoPages[0]=p1;
   dicoPages[1]=p2;
   dicoPages[2]=p3;
-
   */
+
+
 
   streambuf* oldCoutBuffer = cout.rdbuf(fluxDot.rdbuf());//redirection de la sortie sur le flux en parametre
 
@@ -181,7 +248,7 @@ void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
 
   cout.rdbuf(oldCoutBuffer);//redirection sur la sortie standard
 
-  cout<<"Dot-file "<<nameFile<<" généré";
+  cout<<"Dot-file "<<nameFile<<" généré"<<endl;
 
   fluxDot.close();
 

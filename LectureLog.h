@@ -58,6 +58,7 @@ public:
   string getNextWord(const string& line, const int& curSpace, int& nextSpace);
   void  Lecture(ifstream& fluxLog,bool activeGraphe, bool activeExtension,int horaire,fstream*  fluxDot);
   void creationGraphe(fstream& fluxDot, string nameFile);
+  void  Top10();
 
 
 
