@@ -141,6 +141,7 @@ void GestionMenu::LectureCommande(int argc, char** argv )
     ifstream fluxLog;
     fstream* fluxDot=new fstream;
     bool erreurMenu=false;
+    string messageManuel="Référrez vous au manuel utilisateur";
 
     if(argc<=7)
     {
@@ -155,11 +156,11 @@ void GestionMenu::LectureCommande(int argc, char** argv )
                     erreurMenu=true;
                     if(i>=argc-2)
                     {
-                        cerr<<" Avec ces options vous devez spécifier un fichier Dot et un fichier Log. Référrez vous au manuel utilisateur "<<endl;
+                        cerr<<" Avec ces options vous devez spécifier un fichier Dot et un fichier Log. "<<messageManuel<<endl;
                     }
                     else
                     {
-                        cerr<<" Erreur de syntaxe. Option double. Référrez vous au manuel utilisateur "<<endl;
+                        cerr<<" Erreur de syntaxe. Option double. "<<messageManuel<<endl;
                     }
                 }
                 else
@@ -179,12 +180,12 @@ void GestionMenu::LectureCommande(int argc, char** argv )
                     erreurMenu=true;
                     if(i>=argc-2)
                     {
-                        cerr<<" Avec ces options vous devez spécifier une horaire et un fichier Log. Référrez vous au manuel utilisateur "<<endl;
+                        cerr<<" Avec ces options vous devez spécifier une horaire et un fichier Log. "<<messageManuel<<endl;
 
                     }
                     else
                     {
-                        cerr<<" Erreur de syntaxe.Option double. Référrez vous au manuel utilisateur "<<endl;
+                        cerr<<" Erreur de syntaxe.Option double. "<<messageManuel<<endl;
                     }
                 }
                 else
@@ -192,10 +193,10 @@ void GestionMenu::LectureCommande(int argc, char** argv )
                   //lecture Heure
                     arg=argv[++i];
                     horaire=stoi(arg,0,10);
-                    if(horaire<0 || horaire>24)
+                    if(horaire<0 || horaire>=24)
                     {
                         erreurMenu=true;
-                        cerr<<" Horaire indiquée non valide. L'horaire doit appartenir à l'intervalle [0-24]"<<endl;
+                        cerr<<" Horaire indiquée non valide. L'horaire doit appartenir à l'intervalle [0-23]"<<endl;
                     }
                     activeHeure=true;
                 }
@@ -210,12 +211,12 @@ void GestionMenu::LectureCommande(int argc, char** argv )
 
                     if(arg!="-e")
                     {
-                        cerr<<" Erreur de syntaxe.Option inconnue. Référrez vous au manuel utilisateur "<<endl;
+                        cerr<<" Erreur de syntaxe.Option inconnue. "<<messageManuel<<endl;
                     }
 
                     else
                     {
-                        cerr<<" Erreur de syntaxe.Option double. Référrez vous au manuel utilisateur "<<endl;
+                        cerr<<" Erreur de syntaxe.Option double. "<<messageManuel<<endl;
                     }
                 }
 
@@ -238,7 +239,7 @@ void GestionMenu::LectureCommande(int argc, char** argv )
             else
             {   //pas de log en parametre
                 erreurMenu=true;
-                cerr<<" Aucun fichier Log passé en paramètre. Référrez vous au manuel utilisateur "<<endl;
+                cerr<<" Aucun fichier Log passé en paramètre. "<<messageManuel<<endl;
             }
 
             if(fluxLog && argc-1>0 )
@@ -270,7 +271,7 @@ void GestionMenu::LectureCommande(int argc, char** argv )
     }
     else
     {
-        cerr<<"Erreur de syntaxe. Référrez vous au manuel utilisateur "<<endl;
+        cerr<<"Erreur de syntaxe. "<<messageManuel<<endl;
         erreurMenu=true;
     }
 
