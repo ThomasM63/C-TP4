@@ -75,6 +75,11 @@ void  GestionMenu ::ErreurFichier(const string format,char* nameFile )
 }
 
 
+
+
+
+
+
 bool GestionMenu::Ouverture(fstream*& fic,const string format,char* nameFile )
 {
     string argString(nameFile);
@@ -286,7 +291,7 @@ void GestionMenu::LectureCommande(int argc, char** argv )
 //------------------------------------------------- Surcharge d'opérateurs
 
 
-//-------------------------------------------- Construiocteurs - destructeur
+//-------------------------------------------- Constructeurs - destructeur
 
 GestionMenu::GestionMenu()
 {
