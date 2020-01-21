@@ -41,6 +41,11 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
     string line, urlDepart, urlArrivee, urlBase, extensionDepart, ip, ulog, aUser, date, fuseau, typeAction, protocole, status, tailleRep, idClient;
     int curSpace; // positions de caractères espace pour le découpage des lignes
     int nextSpace;
+    int tailleHeure = 1; // nombre de caractères à considérer dans le string de l'heure
+    if(horaire >= 10)
+    {
+        tailleHeure = 2;
+    }
     unsigned int posQMark; // position de caractère '?' pour le nettoyage d'url
     // récupération de l'url de base
     ifstream fichierURLbase;
@@ -66,7 +71,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
 
         if(horaire != -1) // vérification du critère d'horaire de l'option -t
         {
-            if(!(date.substr(date.size()-8, 2) == to_string(horaire)))
+            if(!(date.substr(date.size()-6-tailleHeure, tailleHeure) == to_string(horaire)))
             {
                 continue;
             }
@@ -82,7 +87,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
         urlArrivee = getNextWord(line, curSpace, nextSpace);
         curSpace = nextSpace;
         posQMark = urlArrivee.find('?');
-        if(posQMark != string::npos) // on coupe tout à partir du premier '?' trouvé
+        if(posQMark != urlArrivee.npos) // on coupe tout à partir du premier '?' trouvé
         {
             urlArrivee = urlArrivee.substr(0, posQMark);
         }
