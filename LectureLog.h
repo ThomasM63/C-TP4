@@ -13,8 +13,11 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <iostream>
+#include <cstring>
+#include <fstream>
+#include <map>
 
-//#include "Page.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -26,23 +29,18 @@
 //------------------------------------------------------------------------
 using namespace std;
 
-
 typedef struct Page
 {
-
-
 
   string url;
   string nbClics;
   unordered_map<int,int>dicoTransition;
 
-Page ( string adresse="",int nombreClics=0)
-{
-
-  url=adresse;
-  nbClics=nombreClics;
-}
-
+  Page ( string adresse="",int nombreClics=0)
+  {
+    url=adresse;
+    nbClics=nombreClics;
+  }
 
 }
 Page;
@@ -55,10 +53,13 @@ class LectureLog
 public:
 
 //----------------------------------------------------- Méthodes publiques
+
+  unordered_map <int,int> ConstructionMapTemp();
   string getNextWord(const string& line, const int& curSpace, int& nextSpace);
-  void  Lecture(ifstream& fluxLog,bool activeGraphe, bool activeExtension,int horaire,fstream*  fluxDot);
+  bool checkExtension(string url);
+  void  Lecture(ifstream& fluxLog, bool activeExtension, int horaire);
   void creationGraphe(fstream& fluxDot, string nameFile);
-  void  Top10();
+  void  Top10(int nbTop);
 
 
 

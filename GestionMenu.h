@@ -14,11 +14,12 @@
 #include <string>
 #include <unordered_map>
 
-//#include "Page.h"
 #include "unistd.h"
 #include "LectureLog.h"
 
 //------------------------------------------------------------- Constantes
+const string formatLog=".log";
+const string formatDot=".dot";
 
 //------------------------------------------------------------------ Types
 
@@ -27,8 +28,6 @@
 //classe permettant de lire le fichier log passé en paramètre
 //------------------------------------------------------------------------
 using namespace std;
-
-
 
 class GestionMenu
 {
@@ -46,11 +45,11 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    GestionMenu ();
+  GestionMenu ();
     // Mode d'emploi :
     //
 
-    virtual ~GestionMenu ( );
+  virtual ~GestionMenu ( );
     // Mode d'emploi :
     //
 
