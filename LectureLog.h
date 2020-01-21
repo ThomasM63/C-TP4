@@ -32,20 +32,20 @@ typedef struct Page
 
 
 
-  string url;
-  string nbClics;
-  unordered_map<int,int>dicoTransition;
+    string url;
+    string nbClics;
+    unordered_map<int,int>dicoTransition;
 
-Page ( string adresse="",int nombreClics=0)
-{
+    Page ( string adresse="",int nombreClics=0)
+    {
 
-  url=adresse;
-  nbClics=nombreClics;
+        url=adresse;
+        nbClics=nombreClics;
+    }
+
+
 }
-
-
-}
-Page;
+        Page;
 
 
 class LectureLog
@@ -55,10 +55,11 @@ class LectureLog
 public:
 
 //----------------------------------------------------- Méthodes publiques
-  string getNextWord(const string& line, const int& curSpace, int& nextSpace);
-  void  Lecture(ifstream& fluxLog, bool activeExtension, int horaire);
-  void creationGraphe(fstream& fluxDot, string nameFile);
-  void  Top10();
+    string getNextWord(const string& line, const int& curSpace, int& nextSpace);
+    bool checkExtension(string url);
+    void  Lecture(ifstream& fluxLog, bool activeExtension, int horaire);
+    void creationGraphe(fstream& fluxDot, string nameFile);
+    void  Top10();
 
 
 
@@ -80,9 +81,9 @@ protected:
 //----------------------------------------------------- Méthodes protégées
 
 //----------------------------------------------------- Attributs protégés
-  unordered_map <string,int> dicoURL;
+    unordered_map <string,int> dicoURL;
 
-  unordered_map <int,Page> dicoPages;
+    unordered_map <int,Page> dicoPages;
 
 
 

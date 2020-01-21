@@ -9,6 +9,7 @@ using namespace std;
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <string>
 //------------------------------------------------------ Include personnel
 #include "LectureLog.h"
 //#include "Page.h"
@@ -30,22 +31,39 @@ string LectureLog::getNextWord(const string& line, const int& curSpace, int& nex
     return line.substr(curSpace + 1, nextSpace - curSpace - 1);
 }
 
+bool LectureLog::checkExtension(string url)
+{
+    if (url.size() > 3)
+    {
+        string extensionDepart = url.substr(url.size() - 3, 3);
+        if (extensionDepart == "css" || extensionDepart == ".js" || extensionDepart == "png" ||
+            extensionDepart == "jpg" || extensionDepart == "gif" || extensionDepart == "bmp") {
+            return true;
+        }
+    }
+    return false;
+}
 
-void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension=false, int horaire=-1)
+void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
 {
 #ifdef MAP
     cout << "Appel à la méthode LectureLog::LectureFichier" << endl;
 #endif
-
+    // variables contenant les informations de la requête en cours
     string line, urlDepart, urlArrivee, urlBase, extensionDepart, ip, ulog, aUser, date, fuseau, typeAction, protocole, status, tailleRep, idClient;
-    int curSpace, nextSpace;
-
+    int curSpace; // positions de caractères espace pour le découpage des lignes
+    int nextSpace;
+    int posQMark; // position de caractère '?' pour le nettoyage d'url
+    // récupération de l'url de base
     ifstream fichierURLbase;
     fichierURLbase.open("URL_base.txt");
-    getline(fichierURLbase, urlBase);
+    if(fichierURLbase)
+    {
+        getline(fichierURLbase, urlBase);
+    }
     fichierURLbase.close();
 
-    while(getline(fluxLog, line))
+    while(getline(fluxLog, line)) // pour chaque ligne du fichier log
     {
         curSpace = -1;
 
@@ -58,7 +76,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension=false, int hora
         date = getNextWord(line, curSpace+1, nextSpace);
         curSpace = nextSpace;
 
-        if(horaire != -1)
+        if(horaire != -1) // vérification du critère d'horaire de l'option -t
         {
             if(!(date.substr(date.size()-8, 2) == to_string(horaire)))
             {
@@ -72,18 +90,21 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension=false, int hora
         typeAction = getNextWord(line, curSpace+1, nextSpace);
         curSpace = nextSpace;
 
+        // récupération de l'url d'arrivée
         urlArrivee = getNextWord(line, curSpace, nextSpace);
         curSpace = nextSpace;
-
-        if(activeExtension) {
-            extensionDepart = urlArrivee.substr(urlArrivee.size() - 3, 3);
-            if (extensionDepart == "css" || extensionDepart == ".js" || extensionDepart == "png" ||
-                extensionDepart == "jpg" || extensionDepart == "gif" || extensionDepart == "bmp")
+        posQMark = urlArrivee.find('?');
+        if(posQMark != string::npos) // on coupe tout à partir du premier '?' trouvé
+        {
+            urlArrivee = urlArrivee.substr(0, posQMark);
+        }
+        if(activeExtension) // vérification du critère d'extension de l'option -e
+        {
+            if(checkExtension(urlDepart))
             {
                 continue;
             }
         }
-        cerr << "hallo" << endl;
 
         protocole = getNextWord(line, curSpace, nextSpace);
         protocole = protocole.substr(0, protocole.size()-1);
@@ -93,6 +114,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension=false, int hora
         tailleRep = getNextWord(line, curSpace, nextSpace);
         curSpace = nextSpace;
 
+        // récupération de l'url de départ
         urlDepart = getNextWord(line, curSpace, nextSpace);
         urlDepart = urlDepart.substr(1, urlDepart.size()-2);
         if(urlDepart.size() >= urlBase.size())
@@ -102,57 +124,47 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension=false, int hora
                 urlDepart = urlDepart.substr(urlBase.size(), urlDepart.size()-urlBase.size());
             }
         }
-        //curSpace = nextSpace;
+        posQMark = urlDepart.find('?');
+        if(posQMark != string::npos) // on coupe tout à partir du premier '?' trouvé
+        {
+            urlDepart = urlDepart.substr(0, posQMark);
+        }
 
-        idClient = line.substr(nextSpace+1, line.size()-nextSpace-2);
+        idClient = line.substr(nextSpace+1, line.size()-nextSpace-2); // tout le reste de la ligne
 
-        //cout << urlDepart << " -> " << urlArrivee << endl;
-
-        if(dicoURL.find(urlDepart) == dicoURL.end())
+        // création des nouvelles pages si besoin, et insertion dans les dictionnaires
+        if(dicoURL.find(urlDepart) == dicoURL.end()) // url de départ
         {
             unsigned int indice = dicoURL.size();
             dicoURL.insert({urlDepart, indice});
             dicoPages.insert({indice, Page(urlDepart)});
         }
-
-        if(dicoURL.find(urlArrivee) == dicoURL.end())
+        if(dicoURL.find(urlArrivee) == dicoURL.end()) // url d'arrivée
         {
-            //cout << "insertion nouvelle page arrivee" << endl;
             unsigned int indice = dicoURL.size();
             dicoURL.insert({urlArrivee, indice});
             dicoPages.insert({indice, Page(urlArrivee)});
         }
-
+        // récupération des indices de départ et d'arrivée (on n'utilise plus les url à partir d'ici)
         unsigned int indiceDepart = dicoURL[urlDepart];
         unsigned int indiceArrivee = dicoURL[urlArrivee];
         Page * pageArrivee = &dicoPages[indiceArrivee];
 
+        // on vérifie si la transition entre la page de départ et la page d'arrivée existe déjà
         int count = pageArrivee->dicoTransition.count(indiceDepart);
         if(count == 0) // la transition n'existait pas encore
         {
             pageArrivee->dicoTransition.insert({indiceDepart, 1}); // transition effectuee 1 fois
-        } else
+        } else // la transition existait déjà
         {
             ++pageArrivee->dicoTransition[indiceDepart];
         }
 
-        cout << extensionDepart << " " << ip << " " << ulog << " " << aUser << " " << date << " " << fuseau << " " << typeAction << " " << protocole << " " << status << " " << tailleRep << " " << idClient << endl;
-    }
-
-    cerr << endl;
-    for(auto it1 = dicoPages.begin(); it1 != dicoPages.end(); ++it1)
-    {
-        cerr << "Page n." << (*it1).first << " : " << (*it1).second.url << endl;
-        cerr << "   transitions :" << endl;
-        for(auto it2 = (*it1).second.dicoTransition.begin(); it2 != (*it1).second.dicoTransition.end(); ++it2)
-        {
-            cerr << "   Depuis la page n." << (*it2).first << " : " << (*it2).second << " clics" << endl;
-        }
-        cerr << endl;
+        //cout << extensionDepart << " " << ip << " " << ulog << " " << aUser << " " << date << " " << fuseau << " " << typeAction << " " << protocole << " " << status << " " << tailleRep << " " << idClient << endl;
+        // un traitement des informations de la requête peut être ajouté ici
     }
 
     fluxLog.close();
-
 }
 
 
