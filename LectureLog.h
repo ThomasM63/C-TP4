@@ -13,7 +13,8 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
-#include "Page.h"
+
+//#include "Page.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -24,6 +25,29 @@
 //classe permettant de lire le fichier log passé en paramètre
 //------------------------------------------------------------------------
 using namespace std;
+
+
+typedef struct Page
+{
+
+
+
+  string url;
+  string nbClics;
+  unordered_map<int,int>dicoTransition;
+
+Page ( string adresse="",int nombreClics=0)
+{
+
+  url=adresse;
+  nbClics=nombreClics;
+}
+
+
+}
+Page;
+
+
 class LectureLog
 {
 //----------------------------------------------------------------- PUBLIC
@@ -31,26 +55,22 @@ class LectureLog
 public:
 
 //----------------------------------------------------- Méthodes publiques
+  string getNextWord(const string& line, const int& curSpace, int& nextSpace);
+  void  Lecture(ifstream& fluxLog, bool activeExtension, int horaire);
+  void creationGraphe(fstream& fluxDot, string nameFile);
+  void  Top10();
 
-    void ErreurFichier(ifstream& fic,const string format,char* nameFile );
 
-    bool Ouverture(ifstream& fic,const string format,char* nameFile );
-
-    string getNextWord(const string& line, const int& curSpace, int& nextSpace);
-
-    int LectureFichier(ifstream& fluxLog, bool activeGraphe, bool activeExtension, int horaire, ifstream * fluxDot);
-
-    int LectureCommande(int argc, char** argv);
 
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    LectureLog();
+    LectureLog ( );
     // Mode d'emploi :
     //
 
-    virtual ~LectureLog();
+    virtual ~LectureLog ( );
     // Mode d'emploi :
     //
 
@@ -60,8 +80,12 @@ protected:
 //----------------------------------------------------- Méthodes protégées
 
 //----------------------------------------------------- Attributs protégés
-    unordered_map<string, unsigned int> dicoURL;
-    unordered_map<unsigned int, Page> dicoPages;
+  unordered_map <string,int> dicoURL;
+
+  unordered_map <int,Page> dicoPages;
+
+
+
 
 };
 
