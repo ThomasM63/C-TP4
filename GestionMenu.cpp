@@ -75,10 +75,15 @@ void  GestionMenu ::ErreurFichier(const string format,char* nameFile )
 }
 
 
+
+
+
+
+
 bool GestionMenu::Ouverture(fstream*& fic,const string format,char* nameFile )
 {
     string argString(nameFile);
-    (*fic).open(nameFile,ios::in|ios::out);
+    (*fic).open(nameFile,ios::trunc|ios::out);
     //ouverture fichier dot
     if(*fic)
     {

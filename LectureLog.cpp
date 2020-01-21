@@ -160,6 +160,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
     fluxLog.close();
 }
 
+
 unordered_map <int,int> LectureLog::ConstructionMapTemp()
 {
   unordered_map <int,int> mapTemp;//clef : indicePage | valeur: nbHits
