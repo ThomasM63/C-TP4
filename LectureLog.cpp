@@ -49,7 +49,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
     unsigned int posQMark; // position de caractère '?' pour le nettoyage d'url
     // récupération de l'url de base
     ifstream fichierURLbase;
-    fichierURLbase.open("URL_base.txt");
+    fichierURLbase.open("D:\\C et C++\\C-TP4\\URL_base.txt");
     if(fichierURLbase)
     {
         getline(fichierURLbase, urlBase);
@@ -93,7 +93,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
         }
         if(activeExtension) // vérification du critère d'extension de l'option -e
         {
-            if(checkExtension(urlDepart))
+            if(checkExtension(urlArrivee))
             {
                 continue;
             }
@@ -159,7 +159,6 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
 
     fluxLog.close();
 }
-
 
 unordered_map <int,int> LectureLog::ConstructionMapTemp()
 {
