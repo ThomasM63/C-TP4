@@ -7,8 +7,6 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "LectureLog.h"
-//#include "Page.h"
-
 
 //------------------------------------------------------------- Constantes
 
@@ -160,6 +158,7 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
     fluxLog.close();
 }
 
+
 unordered_map <int,int> LectureLog::ConstructionMapTemp()
 {
   unordered_map <int,int> mapTemp;//clef : indicePage | valeur: nbHits
@@ -189,63 +188,75 @@ unordered_map <int,int> LectureLog::ConstructionMapTemp()
 }
 
 
-void LectureLog:: Top10(int nbTop)
+void LectureLog::Top10(int nbTop)
 {
-    unordered_map <int,int> mapTemp=ConstructionMapTemp();
-    if(mapTemp.size()==0)
-    {
-        cout<<"Fichier .log vide"<<endl;
-    }
 
-    multimap<int,int> mapHits;//clé: nombre de Hits | valeur: indicePage
+  int indiceC;
+  string URL;
 
-    for(auto el : mapTemp)
-    {
-        mapHits.insert({el.second,el.first});
-        //construction multimap à l'aide de la map temporelle
-    }
+  string resultat="";//contient tout le texte a recopier dans le fichier.dot
+  string noeuds;
+  string liens;
+  int indiceDebut;
+  int nbClics;
 
-    int nbIter=0;
-    multimap<int,int>::reverse_iterator rit;
-    int indicePage;
-    string urlPage;
-    for(rit=mapHits.rbegin();rit!=mapHits.rend() && nbIter<=nbTop-1;rit++)
-    {
-        nbIter++;
-        indicePage=rit->second;
-        urlPage=(dicoPages[indicePage]).url;
-        cout<<urlPage<<" (nombre hits = "<<rit->first<<")"<<endl;
-        //affichage des pages les plus visitées
-    }
+  for(auto page : dicoPages)
+  {
+      //parcours des documents
+      indiceC=page.first;
+      noeuds="node"+to_string(indiceC)+" [label=\""+page.second.url+"\"];\n";
+      //ajout (au debut)du noeud dans resultat
+      resultat.insert(0,noeuds);
+
+      for(auto trans: page.second.dicoTransition)
+      {
+          //parcours des transitions avec pour page d'arrivee  la variable page
+          indiceDebut=trans.first;
+          nbClics=trans.second;
+          liens="node"+to_string(indiceDebut)+"->"+" node"+to_string(indiceC)+" [label=\""+to_string(nbClics)+"\"];\n";
+          //ajout a la fin de resultat les transitions
+          resultat.append(liens);
+      }
+  }
+
+  resultat.append("}");
+  resultat.insert(0,"digraph {\n");
+
+  unordered_map <int,int> mapTemp=ConstructionMapTemp();
+
+  if(mapTemp.size()==0)
+  {
+      cout<<"Fichier .log vide"<<endl;
+  }
+
+  multimap<int,int> mapHits;//clé: nombre de Hits | valeur: indicePage
+
+  for(auto el : mapTemp)
+  {
+      mapHits.insert({el.second,el.first});
+      //construction multimap à l'aide de la map temporelle
+  }
+
+  int nbIter=0;
+  multimap<int,int>::reverse_iterator rit;//parcours en sens inverse car par défaut l'ABR est trié selon valeurs croissantes
+  int indicePage;
+  string urlPage;
+  for(rit=mapHits.rbegin();rit!=mapHits.rend() && nbIter<=nbTop-1;rit++)
+  {
+      nbIter++;
+      indicePage=rit->second;
+      urlPage=(dicoPages[indicePage]).url;
+      cout<<urlPage<<" (nombre hits = "<<rit->first<<")"<<endl;
+      //affichage des pages les plus visitées
+  }
 }
 
-void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
+string LectureLog::creationGrapheString()
 {
-
-    //TEST pour création de graphe avec valeurs arbitraires
-
-    /*Page p1("https:Google.fr");
-
-    Page p2("https:Youtube.fr");
-
-    Page p3("https:Yahoo.fr");
-
-
-    p1.dicoTransition[1]=6;
-    p2.dicoTransition[2]=8;
-    p3.dicoTransition[0]=8;
-
-    dicoPages[0]=p1;
-    dicoPages[1]=p2;
-    dicoPages[2]=p3;
-    */
-
-    streambuf* oldCoutBuffer = cout.rdbuf(fluxDot.rdbuf());//redirection de la sortie sur le .dot
-
     int indiceC;
     string URL;
 
-    string resultat="";
+    string resultat="";//contient tout le texte a recopier dans le fichier.dot
     string noeuds;
     string liens;
     int indiceDebut;
@@ -253,15 +264,19 @@ void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
 
     for(auto page : dicoPages)
     {
+        //parcours des documents
         indiceC=page.first;
         noeuds="node"+to_string(indiceC)+" [label=\""+page.second.url+"\"];\n";
+        //ajout (au debut)du noeud dans resultat
         resultat.insert(0,noeuds);
 
         for(auto trans: page.second.dicoTransition)
         {
+            //parcours des transitions avec pour page d'arrivee  la variable page
             indiceDebut=trans.first;
             nbClics=trans.second;
             liens="node"+to_string(indiceDebut)+"->"+" node"+to_string(indiceC)+" [label=\""+to_string(nbClics)+"\"];\n";
+            //ajout a la fin de resultat les transitions
             resultat.append(liens);
         }
     }
@@ -269,16 +284,23 @@ void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
     resultat.append("}");
     resultat.insert(0,"digraph {\n");
 
-    cout<<resultat;
+    return resultat;
+  }
+
+  void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
+  {
+
+    streambuf* oldCoutBuffer = cout.rdbuf(fluxDot.rdbuf());//redirection de la sortie sur le .dot
+    string resultat=creationGrapheString();
+
+    cout<<resultat;//on recopie la chaine resultat dans le dot
 
     cout.rdbuf(oldCoutBuffer);//redirection sur la sortie standard
 
     cout<<"Dot-file "<<nameFile<<" généré"<<endl;
 
     fluxDot.close();
-
-}
-
+  }
 
 
 //------------------------------------------------- Surcharge d'opérateurs

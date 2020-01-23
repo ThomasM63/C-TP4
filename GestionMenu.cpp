@@ -4,12 +4,9 @@
 
 //-------------------------------------------------------- Include système
 using namespace std;
-#include <iostream>
-#include <cstring>
-#include <fstream>
+
 //------------------------------------------------------ Include personnel
 #include "GestionMenu.h"
-//#include "Page.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -29,7 +26,6 @@ void GestionMenu:: Permissions(char* nameFile,const string format)
     {
         ecriture=true;
     }
-
 
     int testLecture=access(nameFile,R_OK);
     //test si le fichier existe
@@ -73,12 +69,6 @@ void  GestionMenu ::ErreurFichier(const string format,char* nameFile )
         }
     }
 }
-
-
-
-
-
-
 
 bool GestionMenu::Ouverture(fstream*& fic,const string format,char* nameFile )
 {
@@ -278,8 +268,9 @@ void GestionMenu::LectureCommande(int argc, char** argv )
     if(!erreurMenu)
     {   //traitement correspondant aux options
         LectureLog lect;
-        lect.Lecture(fluxLog, activeExtension, horaire);
-        lect.Top10(10);
+        lect.Lecture(fluxLog, activeExtension, horaire);//lecture fichier log
+        lect.Top10();//par défaut affiche les 10 pages les plus consultées
+
         if(activeGraphe==true)
         {
             lect.creationGraphe(*fluxDot, nameDot);
