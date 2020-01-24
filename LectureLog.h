@@ -29,13 +29,11 @@ using namespace std;
 typedef struct Page
 {
   string url;
-  string nbClics;
   unordered_map<int,int>dicoTransition;//clef : indice page départ | valeur: nb hits avec l'instance page qui le contient
 
-  Page ( string adresse="",int nombreClics=0)
+  Page ( string adresse="")
   {
     url=adresse;
-    nbClics=nombreClics;
   }
 
 }
@@ -68,7 +66,7 @@ public:
 
   string creationGrapheString();
   //Mode d'emploi: renvoie un string contenant tout le code orrespondant au graphe
-  
+
   void  Top10(int nbTop=10);
   //Mode d'emploi: écrit sur la sortie standard le classement des nbTop pages les plus consultées
 
