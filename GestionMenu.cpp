@@ -14,63 +14,50 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 
-void GestionMenu:: Permissions(char* nameFile,const string format)
+void GestionMenu::Permissions(char* nameFile, const string format)
 {
-    bool ecriture;
-    //besoin des ecritures juste pour le fichier .dot
-    if(format==".log")
+    bool ecriture = true;
+    if(format == ".log") // besoin des ecritures juste pour le fichier .dot
     {
         ecriture=false;
     }
-    else
-    {
-        ecriture=true;
-    }
+    int testLecture=access(nameFile, R_OK); // test si le fichier existe
 
-    int testLecture=access(nameFile,R_OK);
-    //test si le fichier existe
-
-    if(testLecture!=0)
+    if(testLecture!=0) // le fichier existe ce qui implique que l'erreur est due aux droits d'acces
     {
-        //le fichier existe ce qui implique que l'erreur est due aux droits d'acces
-        cerr<<"vous n'avez pas les droits en lecture sur "<<nameFile<<" (ou bien sur un répertoire le contenant)"<<endl;
+        cerr << "vous n'avez pas les droits en lecture sur " << nameFile << " (ou bien sur un répertoire le contenant)" << endl;
     }
 
     if(ecriture==true)
-
     {
-        if(access(nameFile,W_OK)!=0 )
-        {   //verification des droits en ecriture sur le fichier .dot
-            cerr<<"vous n'avez pas les droits en écriture sur "<<nameFile<<" (ou bien sur un répertoire le contenant)"<<endl;
+        if(access(nameFile,W_OK) != 0) // verification des droits en ecriture sur le fichier .dot
+        {
+            cerr << "vous n'avez pas les droits en écriture sur " << nameFile << " (ou bien sur un répertoire le contenant)" << endl;
         }
     }
-
-
 }
 
-void  GestionMenu ::ErreurFichier(const string format,char* nameFile )
+void  GestionMenu::ErreurFichier(char* nameFile, const string format)
 {
     string argString(nameFile);
-    //verification du format
-    if(argString.find(format,0)==string::npos)
+    if(argString.find(format,0) == string::npos) // verification du format
     {
-        cerr<<"Vous n'avez pas spécifié un fichier au format "<<format<<endl;
+        cerr << "Vous n'avez pas spécifié un fichier au format " << format << endl;
     }
     else
     {
-        if(access(nameFile,F_OK)==0)
-        {   //le fichier existe : probleme de permission
-            Permissions(nameFile,format);
+        if(access(nameFile, F_OK) == 0) // le fichier existe : probleme de permission
+        {
+            Permissions(nameFile, format);
         }
-
         else
         {
-            cerr<<"Fichier "<<argString<<" introuvable "<<endl;
+            cerr << "Fichier " << argString << " introuvable " << endl;
         }
     }
 }
 
-bool GestionMenu::Ouverture(fstream*& fic,const string format,char* nameFile )
+bool GestionMenu::Ouverture(fstream*& fic, char* nameFile, const string format)
 {
     string argString(nameFile);
     (*fic).open(nameFile,ios::trunc|ios::out);
@@ -113,7 +100,7 @@ bool GestionMenu::Ouverture(fstream*& fic,const string format,char* nameFile )
 
         else
         {
-            ErreurFichier(format,nameFile);
+            ErreurFichier(nameFile, format);
             return false;
         }
     }
@@ -121,43 +108,41 @@ bool GestionMenu::Ouverture(fstream*& fic,const string format,char* nameFile )
 
 void GestionMenu::LectureCommande(int argc, char** argv )
 {
-
-    string arg;
+    string arg; // argument courant parmi la liste des arguments
     string nameDot;
-    bool activeGraphe=false;
-    bool activeExtension=false;
-    bool activeHeure=false;
+    bool activeGraphe = false;
+    bool activeExtension = false;
+    bool activeHeure = false;
     int horaire = -1;
     ifstream fluxLog;
-    fstream* fluxDot=new fstream;
-    bool erreurMenu=false;
-    string messageManuel="Référrez vous au manuel utilisateur";
+    fstream * fluxDot = new fstream;
+    bool erreurMenu = false;
+    string messageManuel = "Référrez vous au manuel utilisateur";
 
-    if(argc<=7)
+    if(argc <= 7) // si il y a plus de 7 arguments, la syntaxe ne peut pas être correcte
     {
-        for(int i=1;i<argc-1 && erreurMenu==false;i++){
-            arg=argv[i];
-            if(arg=="-g")
+        for(int i=1; i < argc-1 && !erreurMenu; i++) // on parcoure les arguments (on ne connaît pas encore leur ordre)
+        {
+            arg = argv[i];
+            if(arg == "-g") // traitement de l'option -g (génération de fichier .dot)
             {
-              //option creation graphe
-                if(i>=argc-2 || activeGraphe==true)
+                if(i >= argc-2 || activeGraphe) // il y a une erreur
                 {
-                    //gestion des éventuelles erreurs
                     erreurMenu=true;
-                    if(i>=argc-2)
+                    if(i >= argc-2) // si il ne reste plus assez d'arguments pour contenir deux fichiers
                     {
-                        cerr<<" Avec ces options vous devez spécifier un fichier Dot et un fichier Log. "<<messageManuel<<endl;
+                        cerr << " Avec ces options vous devez spécifier un fichier Dot et un fichier Log. " << messageManuel << endl;
                     }
-                    else
+                    else // -g a déjà été indiqué parmi les arguments
                     {
-                        cerr<<" Erreur de syntaxe. Option double. "<<messageManuel<<endl;
+                        cerr << " Erreur de syntaxe. Option double. " << messageManuel << endl;
                     }
                 }
                 else
                 {
                     //on essaie d'ouvrir/creer le fichier dot
                     nameDot=argv[++i];
-                    activeGraphe=Ouverture(fluxDot,formatDot,argv[i]);
+                    activeGraphe=Ouverture(fluxDot, argv[i], formatDot);
                     erreurMenu= !activeGraphe;
                 }
             }
@@ -253,13 +238,13 @@ void GestionMenu::LectureCommande(int argc, char** argv )
             {
                 if(argc-1>0)
                 {
-                    ErreurFichier(formatLog,argv[argc-1]);
+                    ErreurFichier(argv[argc-1], formatLog);
                     erreurMenu=true;
                 }
             }
         }
     }
-    else
+    else // trop d'arguments : la syntaxe ne peut pas être correcte
     {
         cerr<<"Erreur de syntaxe. "<<messageManuel<<endl;
         erreurMenu=true;
@@ -290,10 +275,6 @@ GestionMenu::GestionMenu()
 #ifdef MAP
     cout << "Appel au constructeur de <GestionMenu>" << endl;
 #endif
-
-
-
-
 } //----- Fin de GestionMenu
 
 
@@ -302,7 +283,6 @@ GestionMenu::~GestionMenu ()
 #ifdef MAP
     cout << "Appel au destructeur de <GestionMenu>" << endl;
 #endif
-
 } //----- Fin de ~GestionMenu
 
 
