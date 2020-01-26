@@ -57,9 +57,9 @@ void  GestionMenu::ErreurFichier(char* nameFile, const string format)
     }
 }
 
-bool GestionMenu::Ouverture(fstream*& fic, char* nameFile, const string format)
+bool GestionMenu::Ouverture(fstream* fic, char* nameFile, const string format)
 {
-    string argString(nameFile);
+    string argString(nameFile); // on convertit en string pour avoir accès aux méthodes réservées aux string
     (*fic).open(nameFile,ios::trunc|ios::out);
     //ouverture fichier dot
     if(*fic)

@@ -36,7 +36,8 @@ bool LectureLog::checkExtension(string url)
 void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
 {
     // variables contenant les informations de la requête en cours
-    string line, urlDepart, urlArrivee, urlBase, extensionDepart, ip, ulog, aUser, date, fuseau, typeAction, protocole, status, tailleRep, idClient;
+    string line, urlDepart, urlArrivee, urlBase, extensionDepart, ip, ulog, aUser, date, fuseau, typeAction,
+        protocole, status, tailleRep, idClient;
     int curSpace; // positions de caractères espace pour le découpage des lignes
     int nextSpace;
     int tailleHeure = 1; // nombre de caractères à considérer dans le string de l'heure
@@ -158,97 +159,95 @@ void LectureLog::Lecture(ifstream& fluxLog, bool activeExtension, int horaire)
     fluxLog.close();
 }
 
-
 unordered_map <int,int> LectureLog::ConstructionMapTemp()
 {
-  unordered_map <int,int> mapTemp;//clef : indicePage | valeur: nbHits
+    unordered_map <int,int> mapTemp;//clef : indicePage | valeur: nbHits
 
-  //map temporelle pour stocker les hits
+    //map temporelle pour stocker les hits
 
-  int indiceC;
-  int nbClics;
+    int indiceC;
+    int nbClics;
 
-  for(auto page : dicoPages)
-  {
-      indiceC=page.first;
-      int count = mapTemp.count(indiceC);
-      if(count == 0) // la transition n'existait pas encore
-      {
-          mapTemp.insert({indiceC, 0}); // transition effectuee 1 fois
-      }
+    for(auto page : dicoPages)
+    {
+        indiceC=page.first;
+        int count = mapTemp.count(indiceC);
+        if(count == 0) // la transition n'existait pas encore
+        {
+            mapTemp.insert({indiceC, 0}); // transition effectuee 1 fois
+        }
 
-      for(auto trans: page.second.dicoTransition)
-      {
-          nbClics=trans.second;
-          mapTemp[indiceC]+=nbClics; //somme totale des hits de chaque page incrémentée
-      }
-  }
+        for(auto trans: page.second.dicoTransition)
+        {
+            nbClics=trans.second;
+            mapTemp[indiceC]+=nbClics; //somme totale des hits de chaque page incrémentée
+        }
+    }
 
-  return mapTemp;
+    return mapTemp;
 }
-
 
 void LectureLog::Top10(int nbTop)
 {
 
-  int indiceC;
-  string URL;
+    int indiceC;
+    string URL;
 
-  string resultat="";//contient tout le texte a recopier dans le fichier.dot
-  string noeuds;
-  string liens;
-  int indiceDebut;
-  int nbClics;
+    string resultat="";//contient tout le texte a recopier dans le fichier.dot
+    string noeuds;
+    string liens;
+    int indiceDebut;
+    int nbClics;
 
-  for(auto page : dicoPages)
-  {
-      //parcours des documents
-      indiceC=page.first;
-      noeuds="node"+to_string(indiceC)+" [label=\""+page.second.url+"\"];\n";
-      //ajout (au debut)du noeud dans resultat
-      resultat.insert(0,noeuds);
+    for(auto page : dicoPages)
+    {
+        //parcours des documents
+        indiceC=page.first;
+        noeuds="node"+to_string(indiceC)+" [label=\""+page.second.url+"\"];\n";
+        //ajout (au debut)du noeud dans resultat
+        resultat.insert(0,noeuds);
 
-      for(auto trans: page.second.dicoTransition)
-      {
-          //parcours des transitions avec pour page d'arrivee  la variable page
-          indiceDebut=trans.first;
-          nbClics=trans.second;
-          liens="node"+to_string(indiceDebut)+"->"+" node"+to_string(indiceC)+" [label=\""+to_string(nbClics)+"\"];\n";
-          //ajout a la fin de resultat les transitions
-          resultat.append(liens);
-      }
-  }
+        for(auto trans: page.second.dicoTransition)
+        {
+            //parcours des transitions avec pour page d'arrivee  la variable page
+            indiceDebut=trans.first;
+            nbClics=trans.second;
+            liens="node"+to_string(indiceDebut)+"->"+" node"+to_string(indiceC)+" [label=\""+to_string(nbClics)+"\"];\n";
+            //ajout a la fin de resultat les transitions
+            resultat.append(liens);
+        }
+    }
 
-  resultat.append("}");
-  resultat.insert(0,"digraph {\n");
+    resultat.append("}");
+    resultat.insert(0,"digraph {\n");
 
-  unordered_map <int,int> mapTemp=ConstructionMapTemp();
+    unordered_map <int,int> mapTemp=ConstructionMapTemp();
 
-  if(mapTemp.size()==0)
-  {
-      cout<<"Fichier .log vide"<<endl;
-  }
+    if(mapTemp.size()==0)
+    {
+        cout<<"Fichier .log vide"<<endl;
+    }
 
-  multimap<int,int> mapHits;//clé: nombre de Hits | valeur: indicePage
+    multimap<int,int> mapHits;//clé: nombre de Hits | valeur: indicePage
 
-  for(auto el : mapTemp)
-  {
-      mapHits.insert({el.second,el.first});
-      //construction multimap à l'aide de la map temporelle
-  }
+    for(auto el : mapTemp)
+    {
+        mapHits.insert({el.second,el.first});
+        //construction multimap à l'aide de la map temporelle
+    }
 
-  int nbIter=0;
-  multimap<int,int>::reverse_iterator rit;//parcours en sens inverse car par défaut l'ABR est trié selon valeurs croissantes
-  int indicePage;
-  string urlPage;
-  for(rit=mapHits.rbegin();rit!=mapHits.rend() && nbIter<=nbTop-1;rit++)
-  {
-      nbIter++;
-      indicePage=rit->second;
-      urlPage=(dicoPages[indicePage]).url;
-      cout<<urlPage<<" (nombre hits = "<<rit->first<<")"<<endl;
-      //affichage des pages les plus visitées
-  }
+    int nbIter=0;
+    multimap<int,int>::reverse_iterator rit;//parcours en sens inverse car par défaut l'ABR est trié selon valeurs croissantes
+    int indicePage;
+    string urlPage;
+    for(rit=mapHits.rbegin();rit!=mapHits.rend() && nbIter<=nbTop-1;rit++)
+    {
+        nbIter++;
+        indicePage=rit->second;
+        urlPage=(dicoPages[indicePage]).url;
+        cout<<urlPage<<" (nombre hits = "<<rit->first<<")"<<endl;
+        //affichage des pages les plus visitées
+    }
 }
 
 string LectureLog::creationGrapheString()
@@ -285,10 +284,10 @@ string LectureLog::creationGrapheString()
     resultat.insert(0,"digraph {\n");
 
     return resultat;
-  }
+}
 
-  void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
-  {
+void LectureLog::creationGraphe(fstream& fluxDot, string nameFile)
+{
 
     streambuf* oldCoutBuffer = cout.rdbuf(fluxDot.rdbuf());//redirection de la sortie sur le .dot
     string resultat=creationGrapheString();
@@ -300,33 +299,26 @@ string LectureLog::creationGrapheString()
     cout<<"Dot-file "<<nameFile<<" généré"<<endl;
 
     fluxDot.close();
-  }
-
+}
 
 //------------------------------------------------- Surcharge d'opérateurs
-
 
 //-------------------------------------------- Constructeurs - destructeur
 
 LectureLog::LectureLog()
 {
-  #ifdef MAP
+#ifdef MAP
     cout << "Appel au constructeur de <LectureLog>" << endl;
-  #endif
-
-
-
+#endif
 } //----- Fin de LectureLog
-
 
 LectureLog::~LectureLog ()
 {
-  #ifdef MAP
+#ifdef MAP
     cout << "Appel au destructeur de <LectureLog>" << endl;
-  #endif
+#endif
 
 } //----- Fin de ~LectureLog
-
 
 //------------------------------------------------------------------ PRIVE
 
